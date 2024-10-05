@@ -3,6 +3,9 @@ node_modules/
 client/node_modules/
 api/node_modules/
 
+# Ignore uploaded images
+/client/public/upload
+
 # Ignore environment variable files
 .env
 client/.env
