@@ -72,12 +72,12 @@ export const verifyToken = (req, res, next) => {
     return res.status(401).json('Unauthorized: No token provided!');
   }
 
-  jwt.verify(token, 'jwtkey', (err, user) => {
+  jwt.verify(token, 'jwtkey', (err, userInfo) => {
     if (err) {
       return res.status(403).json('Invalid or expired token');
     }
 
-    req.user = user; // Attach user information to the request object
+    req.userInfo = userInfo; // Attach user information to the request object
     next();
   });
 };
