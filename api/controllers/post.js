@@ -28,7 +28,8 @@ export const getPost = (req, res) => {
 
 // Add a new post (protected route)
 export const addPost = (req, res) => {
-  const q = 'INSERT INTO users(`username`,`email`,`password`) VALUES (?)';
+  const q =
+    'INSERT INTO posts(`title`, `desc`, `img`, `cat`, `date`,`uid`) VALUES (?)';
 
   const values = [
     req.body.title,
