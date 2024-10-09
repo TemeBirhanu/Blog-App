@@ -42,12 +42,13 @@ export const login = (req, res) => {
     if (!isPasswordCorrect)
       return res.status(400).json('Wrong username or password!');
 
-    const token = jwt.sign({ id: data[0].id }, 'jwtkey');
+    const token = jwt.sign({ id: data[0].id }, 'jwtkey', { expiresIn: '1h' });
     const { password, ...other } = data[0];
 
     res
       .cookie('access_token', token, {
         httpOnly: true,
+        sameSite: 'none',
       })
       .status(200)
       .json(other);
@@ -62,4 +63,21 @@ export const logout = (req, res) => {
     })
     .status(200)
     .json('User has been logged out.');
+};
+
+export const verifyToken = (req, res, next) => {
+  const token = req.cookies.access_token;
+
+  if (!token) {
+    return res.status(401).json('Unauthorized: No token provided!');
+  }
+
+  jwt.verify(token, 'jwtkey', (err, user) => {
+    if (err) {
+      return res.status(403).json('Invalid or expired token');
+    }
+
+    req.user = user; // Attach user information to the request object
+    next();
+  });
 };

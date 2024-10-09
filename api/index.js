@@ -12,7 +12,13 @@ import streamifier from 'streamifier'; // For handling the file stream for cloud
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // Your Netlify frontend domain
+    credentials: true, // Allow credentials (cookies, authorization headers)
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 
