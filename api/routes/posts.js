@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken } from './auth.js';
+import { verifyToken } from '../controllers/auth.js';
 import {
   addPost,
   deletePost,
