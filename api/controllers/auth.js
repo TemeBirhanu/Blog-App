@@ -45,13 +45,7 @@ export const login = (req, res) => {
     const token = jwt.sign({ id: data[0].id }, 'jwtkey', { expiresIn: '1h' });
     const { password, ...other } = data[0];
 
-    res
-      .cookie('access_token', token, {
-        httpOnly: true,
-        sameSite: 'none',
-      })
-      .status(200)
-      .json(other);
+    res.status(200).json({ ...other, token });
   });
 };
 
@@ -66,8 +60,7 @@ export const logout = (req, res) => {
 };
 
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.access_token;
-
+  const token = req.headers.authorization?.split(' ')[1]; // From Authorization Bearer
   if (!token) {
     return res.status(401).json('Unauthorized: No token provided!');
   }
