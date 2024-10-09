@@ -29,7 +29,7 @@ export const getPost = (req, res) => {
 // Add a new post (protected route)
 export const addPost = (req, res) => {
   const q =
-    'INSERT INTO posts(`title`, `desc`, `img`, `cat`, `date`, `uid`) VALUES (?)';
+    'INSERT INTO posts(`title`, `desc`, `img`, `cat`, `date`, `uid`) VALUES (?, ?, ?, ?, ?, ?)';
 
   const values = [
     req.body.title,
@@ -41,7 +41,12 @@ export const addPost = (req, res) => {
   ];
 
   db.query(q, [values], (err, data) => {
-    if (err) return res.status(500).json(err);
+    if (err) {
+      console.error('Database error:', err); // Log the error for debugging
+      return res
+        .status(500)
+        .json('Server error occurred while creating the post');
+    }
     return res.json('Post has been created.');
   });
 };
