@@ -12,9 +12,22 @@ import streamifier from 'streamifier'; // For handling the file stream for cloud
 dotenv.config();
 
 const app = express();
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://teme-blog-app.netlify.app',
+];
+
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Your Netlify frontend domain
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true, // Allow credentials (cookies, authorization headers)
   })
 );
