@@ -28,8 +28,12 @@ const Write = () => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await axios.post('/upload', formData);
-      return res.data;
+      const res = await axios.post(
+        'http://localhost:8800/api/upload',
+        formData
+      );
+      console.log(res.data);
+      return res.data.url; // Cloudinary URL returned by the API
     } catch (err) {
       console.log(err);
     }
@@ -38,21 +42,34 @@ const Write = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      const imgUrl = await upload();
+      const imgUrl = file ? await upload() : state?.img || '';
+      const postPayload = {
+        title,
+        desc: value,
+        cat,
+        img: imgUrl, // Use the Cloudinary URL
+        date: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+      };
+      const token = localStorage.getItem('token');
+
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       state
-        ? await axios.put(`/posts/${state.id}`, {
-            title,
-            desc: value,
-            cat,
-            img: file ? imgUrl : state?.img || '',
-          })
-        : await axios.post(`/posts/`, {
-            title,
-            desc: value,
-            cat,
-            img: file ? imgUrl : '',
-            date: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
-          });
+        ? await axios.put(
+            `http://localhost:8800/api/posts/${state.id}`,
+            postPayload,
+            headers
+          )
+        : await axios.post(
+            'http://localhost:8800/api/posts/',
+            postPayload,
+            headers
+          );
+
       navigate('/');
     } catch (err) {
       setError('Failed to submit the post');

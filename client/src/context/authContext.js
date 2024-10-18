@@ -5,21 +5,26 @@ export const AuthContext = createContext();
 
 export const AuthContexProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem('user')) || null
+    JSON.parse(localStorage.getItem('userInfo')) || null
   );
 
   const login = async (inputs) => {
-    const res = await axios.post('/auth/login', inputs);
+    const res = await axios.post(
+      'http://localhost:8800/api/auth/login',
+      inputs
+    );
     setCurrentUser(res.data);
+    localStorage.setItem('token', res.data.token); // Store token
   };
 
   const logout = async (inputs) => {
-    await axios.post('/auth/logout');
+    await axios.post('http://localhost:8800/api/auth/logout');
     setCurrentUser(null);
+    localStorage.removeItem('token');
   };
 
   useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(currentUser));
+    localStorage.setItem('userInfo', JSON.stringify(currentUser));
   }, [currentUser]);
 
   return (

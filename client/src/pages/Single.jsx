@@ -22,7 +22,9 @@ const Single = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/posts/${postId}`);
+        const res = await axios.get(
+          `http://localhost:8800/api/posts/${postId}`
+        );
         setPost(res.data);
       } catch (err) {
         console.log(err);
@@ -33,7 +35,7 @@ const Single = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/posts/${postId}`);
+      await axios.delete(`http://localhost:8800/api/posts/${postId}`);
       navigate('/');
     } catch (err) {
       console.log(err);
@@ -45,12 +47,32 @@ const Single = () => {
     return doc.body.textContent;
   };
 
+  if (!post) {
+    return <p>Loading...</p>; // Handle loading state if post is not yet fetched
+  }
+
   return (
     <div className="single">
       <div className="content">
-        <img src={`../upload/${post?.img}`} alt="" />
+        {post.img && (
+          <img
+            src={
+              post.img.startsWith('http') ? post.img : `../upload/${post.img}`
+            }
+            alt="Post"
+          />
+        )}
         <div className="user">
-          {post.userImg && <img src={post.userImg} alt="" />}
+          {post?.userImg && (
+            <img
+              src={
+                post.userImg.startsWith('http')
+                  ? post.userImg
+                  : `../upload/${post.userImg}`
+              }
+              alt="User Image"
+            />
+          )}
           <div className="info">
             <span>{post.username}</span>
             <p>Posted {moment(post.date).fromNow()}</p>
